@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 03-context-budget-manager 03-02-PLAN.md
-last_updated: "2026-03-28T17:50:21.998Z"
+stopped_at: Completed 03-context-budget-manager 03-03-PLAN.md
+last_updated: "2026-03-28T18:03:59.379Z"
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 11
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -52,6 +52,7 @@ Plan: 1 of 5
 | Phase 02-promptbuilder P04 | 5 | 3 tasks | 4 files |
 | Phase 03-context-budget-manager P01 | 5 | 2 tasks | 4 files |
 | Phase 03-context-budget-manager P02 | 11 | 2 tasks | 4 files |
+| Phase 03-context-budget-manager P03 | 8 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,8 @@ Recent decisions affecting current work:
 - [Phase 03-context-budget-manager]: Turns written AFTER reply_text so user gets response even if DB write fails
 - [Phase 03-context-budget-manager]: history_cache module singleton imported directly — consistent with execute/fetchall pattern in codebase
 - [Phase 03-context-budget-manager]: [03-02] From-import patch target is app.llm.conversation_state.fetchall — same lesson as Phase 1 router.py monkeypatching
+- [Phase 03-context-budget-manager]: count_tokens uses character count // 4 — validate against Ollama prompt_eval_count in UAT
+- [Phase 03-context-budget-manager]: response_builder.py uses static SYSTEM_PROMPT import; ContextBudgetManager centralises context assembly
 
 ### Pending Todos
 
@@ -119,6 +122,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T17:50:21.993Z
-Stopped at: Completed 03-context-budget-manager 03-02-PLAN.md
+Last session: 2026-03-28T18:03:31.574Z
+Stopped at: Completed 03-context-budget-manager 03-03-PLAN.md
 Resume file: None

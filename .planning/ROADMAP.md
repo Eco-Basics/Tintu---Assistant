@@ -77,4 +77,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-03-28 |
 | 2. PromptBuilder | 4/4 | Complete    | 2026-03-28 |
-| 3. Context Budget Manager | 2/5 | In Progress|  |
+| 3. Context Budget Manager | 3/5 | In Progress|  |
