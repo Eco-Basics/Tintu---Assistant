@@ -45,7 +45,10 @@ def main():
         MessageHandler(filters.TEXT & ~filters.COMMAND & user_filter, message_handler)
     )
 
-    setup_jobs(app.job_queue, TELEGRAM_USER_ID)
+    if app.job_queue is not None:
+        setup_jobs(app.job_queue, TELEGRAM_USER_ID)
+    else:
+        logger.warning("JobQueue not available — install python-telegram-bot[job-queue] to enable scheduled jobs")
 
     logger.info(f"Starting bot for user_id={TELEGRAM_USER_ID}")
     app.run_polling(drop_pending_updates=True)
