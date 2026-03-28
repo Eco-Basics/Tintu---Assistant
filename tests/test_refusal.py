@@ -43,6 +43,8 @@ async def test_non_answer_bypass(monkeypatch):
     monkeypatch.setattr("app.bot.router.classify", AsyncMock(return_value="set_reminder"))
     mock_generate = AsyncMock(return_value="when: tomorrow 9am\ntitle: code review\nnote: ")
     monkeypatch.setattr("app.bot.router.generate", mock_generate)
+    monkeypatch.setattr("app.bot.router.today_str", lambda: "2026-03-28")
+    monkeypatch.setattr("app.bot.router.create_reminder", AsyncMock(return_value=1))
     from app.bot.router import route
     result = await route("remind me to code tonight at 9pm")
     assert REFUSAL_SUBSTRING not in result.lower()
