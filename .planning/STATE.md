@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 02-promptbuilder 02-02-PLAN.md (SUMMARY retroactively created)
-last_updated: "2026-03-28T17:08:55.186Z"
+stopped_at: Completed 02-promptbuilder 02-01-PLAN.md
+last_updated: "2026-03-28T17:10:02.765Z"
 progress:
   total_phases: 3
   completed_phases: 1
@@ -48,6 +48,7 @@ Plan: 2 of 4
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 10 | 2 tasks | 6 files |
 | Phase 02-promptbuilder P03 | 2 | 1 tasks | 1 files |
+| Phase 02-promptbuilder P01 | 15 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - [Phase 02-promptbuilder]: Default system='' in compare_against_prior() preserves backward compatibility — existing callers with no system arg are unaffected
 - [Phase 02-promptbuilder 02-02]: Patch target for fetchall mock is app.llm.prompt_builder.fetchall (from-import binding) — same lesson as Phase 1 router.py monkeypatching
 - [Phase 02-promptbuilder 02-02]: async_db fixture uses aiosqlite.Row factory so row['key'] dict-style access works correctly in tests
+- [Phase 02-promptbuilder]: test_prompt_builder.py uses direct import (not importorskip) because prompt_builder.py already existed from prior work
+- [Phase 02-promptbuilder]: [02-01] pytest.ini extended with testpaths=tests for explicit discovery scope; conftest.py extended not overwritten per RISK note
 
 ### Pending Todos
 
@@ -107,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T17:06:26.000Z
-Stopped at: Completed 02-promptbuilder 02-02-PLAN.md (SUMMARY retroactively created)
+Last session: 2026-03-28T17:10:02.755Z
+Stopped at: Completed 02-promptbuilder 02-01-PLAN.md
 Resume file: None
