@@ -4,13 +4,13 @@ from app.llm.classifier import classify
 from app.llm.ollama_client import generate
 from app.llm.response_builder import build_answer, build_retrieval_answer, build_compare_answer
 from app.llm.prompts import (
-    SYSTEM_PROMPT,
     TASK_EXTRACT_PROMPT,
     REMINDER_EXTRACT_PROMPT,
     DECISION_EXTRACT_PROMPT,
     COMPLETE_TASK_EXTRACT_PROMPT,
     PREFERENCE_EXTRACT_PROMPT,
 )
+from app.llm.prompt_builder import build_system_prompt
 from app.planning.tasks import create_task, list_tasks, complete_task
 from app.planning.routines import create_routine, list_routines
 from app.planning.schedules import create_reminder, list_pending_reminders
@@ -181,7 +181,8 @@ async def route(message: str) -> str:
                    source=excluded.source, updated_at=datetime('now')""",
                 (key, value, source),
             )
-            return f"Preference saved: *{key}* = {value}"
+            echo = f"Saved: I'll {source.lower().rstrip('.')}."
+            return echo
         return "Got it — I noted your preference."
 
     # ── Search ────────────────────────────────────────────────────────────────
@@ -229,9 +230,10 @@ async def route(message: str) -> str:
 
     # ── Draft ─────────────────────────────────────────────────────────────────
     if intent == "draft_reply":
+        system = await build_system_prompt()
         draft = await generate(
             f"Draft the following. Return only the draft text, no preamble:\n\n{message}",
-            system=SYSTEM_PROMPT,
+            system=system,
         )
         return f"*Draft:*\n\n{draft}\n\n_Reply 'send it' or 'post this' to confirm, or ignore to discard._"
 

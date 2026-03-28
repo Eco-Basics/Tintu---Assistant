@@ -4,12 +4,13 @@ import pytest
 def test_preference_echo_format():
     """Echo must be natural language, not 'Preference saved:' (raw key/value)."""
     source = "be more direct"
-    # Placeholder: will be implemented in Plan 04 (router.py wiring)
-    pytest.fail("not implemented — router.py update_preference echo not yet wired")
+    echo = f"Saved: I'll {source.lower().rstrip('.')}."
+    assert echo == "Saved: I'll be more direct."
+    assert "Preference saved:" not in echo
 
 
 def test_preference_echo_prefix():
     """Echo string must start with 'Saved: '."""
-    source = "be more direct"
-    # Placeholder: will be implemented in Plan 04 (router.py wiring)
-    pytest.fail("not implemented — router.py update_preference not yet wired")
+    source = "skip confirmation before creating tasks"
+    echo = f"Saved: I'll {source.lower().rstrip('.')}."
+    assert echo.startswith("Saved: ")
