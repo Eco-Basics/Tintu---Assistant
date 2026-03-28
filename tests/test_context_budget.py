@@ -333,13 +333,47 @@ async def test_keyfacts_correction_updates_db(db):
 
 @pytest.mark.asyncio
 async def test_continuity_signal_resume(db):
-    """When turns exist in DB for chat_id, load_conversation_state() returns
-    signal='resume' with the last summary text."""
-    raise NotImplementedError
+    """When no turns but prior summary exists, load_conversation_state returns signal='resume'."""
+    from unittest.mock import patch
+    from app.llm.conversation_state import load_conversation_state, ConversationCache
+
+    fresh_cache = ConversationCache()
+
+    async def mock_fetchall(query, params):
+        return []  # No conversation_turns
+
+    async def mock_fetchone(query, params):
+        return {"summary": "Last session: worked on deployment plan."}  # Summary exists
+
+    with patch("app.llm.conversation_state.fetchall", mock_fetchall), \
+         patch("app.llm.conversation_state.fetchone", mock_fetchone), \
+         patch("app.llm.conversation_state.history_cache", fresh_cache):
+        result = await load_conversation_state(12345)
+
+    assert result["signal"] == "resume", f"Expected 'resume', got {result['signal']}"
+    assert result["summary_text"] == "Last session: worked on deployment plan."
+    assert result["messages"] == []
 
 
 @pytest.mark.asyncio
 async def test_continuity_signal_fresh(db):
-    """When no turns and no summaries exist for chat_id, load_conversation_state()
-    returns signal='fresh'."""
-    raise NotImplementedError
+    """When no turns and no summaries, load_conversation_state returns signal='fresh'."""
+    from unittest.mock import patch
+    from app.llm.conversation_state import load_conversation_state, ConversationCache
+
+    fresh_cache = ConversationCache()
+
+    async def mock_fetchall(query, params):
+        return []  # No conversation_turns
+
+    async def mock_fetchone(query, params):
+        return None  # No prior summary
+
+    with patch("app.llm.conversation_state.fetchall", mock_fetchall), \
+         patch("app.llm.conversation_state.fetchone", mock_fetchone), \
+         patch("app.llm.conversation_state.history_cache", fresh_cache):
+        result = await load_conversation_state(99999)
+
+    assert result["signal"] == "fresh", f"Expected 'fresh', got {result['signal']}"
+    assert result["summary_text"] is None
+    assert result["messages"] == []
