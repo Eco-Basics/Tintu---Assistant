@@ -16,7 +16,11 @@ logger = logging.getLogger(__name__)
 async def post_init(application: Application):
     await run_migrations()
     await ensure_vault_structure()
-    await load_conversation_state(TELEGRAM_USER_ID)
+    state = await load_conversation_state(TELEGRAM_USER_ID)
+    # Store signal for first-message handler (CTX-03)
+    application.bot_data["continuity_signal"] = state["signal"]
+    application.bot_data["continuity_summary"] = state.get("summary_text")
+    logger.info(f"Continuity signal: {state['signal']}")
     logger.info("Assistant ready.")
 
 

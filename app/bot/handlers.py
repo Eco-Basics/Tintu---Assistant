@@ -49,6 +49,17 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.message
     text = message.text.strip()
 
+    # Emit session continuity signal on first message only (CTX-03)
+    continuity_signal = context.application.bot_data.pop("continuity_signal", None)
+    if continuity_signal in ("resume", "fresh"):
+        if continuity_signal == "resume":
+            signal_prefix = "Resuming from last session summary.\n\n"
+        else:
+            signal_prefix = "No prior session found — starting fresh.\n\n"
+        context.application.bot_data.pop("continuity_summary", None)
+    else:
+        signal_prefix = ""
+
     # Handle pending key_facts correction (from async summarization background task)
     pending_summary_id = (
         context.user_data.get("pending_summary_id")
@@ -89,7 +100,8 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         await message.reply_chat_action("typing")
         response = await route(text, chat_id=update.effective_chat.id)
-        await message.reply_text(response, parse_mode="Markdown")
+        final_response = f"{signal_prefix}{response}" if signal_prefix else response
+        await message.reply_text(final_response, parse_mode="Markdown")
         # Phase 3: persist conversation turn and update in-memory cache
         chat_id = update.effective_chat.id
         await write_conversation_turn(chat_id, "user", text)

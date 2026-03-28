@@ -7,7 +7,7 @@ DB source of truth: conversation_turns table written on every exchange.
 """
 import logging
 from collections import defaultdict
-from app.storage.db import execute, fetchall
+from app.storage.db import execute, fetchall, fetchone
 
 logger = logging.getLogger(__name__)
 
@@ -49,11 +49,17 @@ async def write_conversation_turn(chat_id: int, role: str, content: str) -> int:
     )
 
 
-async def load_conversation_state(chat_id: int) -> list[dict]:
+async def load_conversation_state(chat_id: int) -> dict:
     """
-    Reload last 8 turns (16 messages) from DB for chat_id into history_cache.
-    Returns the loaded messages (may be empty if no prior turns exist).
-    Called once on startup in main.py post_init.
+    Reload last 8 turns (16 messages) from DB for chat_id.
+    Determine session continuity signal for CTX-03.
+
+    Returns:
+        {
+            "messages": list[dict],                            # loaded history (may be empty)
+            "signal": "seamless" | "resume" | "fresh",        # what to tell the user
+            "summary_text": str | None,                        # most recent summary if signal=="resume"
+        }
     """
     rows = await fetchall(
         """SELECT role, content FROM (
@@ -66,9 +72,24 @@ async def load_conversation_state(chat_id: int) -> list[dict]:
         (chat_id, MAX_MESSAGES),
     )
     messages = [{"role": r["role"], "content": r["content"]} for r in rows]
+
     if messages:
         history_cache.set(chat_id, messages)
-        logger.info(f"Loaded {len(messages)} messages from DB for chat_id={chat_id}")
-    else:
-        logger.info(f"No prior conversation turns found for chat_id={chat_id}")
-    return messages
+        logger.info(f"Loaded {len(messages)} messages from DB for chat_id={chat_id} — seamless continuity")
+        return {"messages": messages, "signal": "seamless", "summary_text": None}
+
+    # No recent turns — check for a prior session summary
+    recent_summary = await fetchone(
+        "SELECT summary FROM conversation_summaries ORDER BY created_at DESC LIMIT 1",
+        (),
+    )
+    if recent_summary:
+        logger.info(f"No turns for chat_id={chat_id}, prior summary found — resume signal")
+        return {
+            "messages": [],
+            "signal": "resume",
+            "summary_text": recent_summary["summary"],
+        }
+
+    logger.info(f"No turns or summaries for chat_id={chat_id} — fresh start signal")
+    return {"messages": [], "signal": "fresh", "summary_text": None}
