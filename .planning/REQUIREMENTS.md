@@ -15,8 +15,8 @@ Requirements for this milestone. All map to roadmap phases.
 ### Personality Layer (PromptBuilder)
 
 - [x] **PERS-01**: System assembles the Ollama system prompt dynamically from personality_traits and behavior_preferences tables on each request — stored preferences are reflected in every answer
-- [ ] **PERS-02**: Rolling conversation history (last 5–8 turns) is included in each Ollama call — assistant can hold a topic across multiple exchanges without the user repeating themselves
-- [ ] **PERS-03**: After ~20 turns, session is compressed and stored with a narrative summary and verbatim key_facts column — specific decisions and named entities survive summarization
+- [x] **PERS-02**: Rolling conversation history (last 5–8 turns) is included in each Ollama call — assistant can hold a topic across multiple exchanges without the user repeating themselves
+- [x] **PERS-03**: After ~20 turns, session is compressed and stored with a narrative summary and verbatim key_facts column — specific decisions and named entities survive summarization
 - [x] **PERS-04**: When a preference is saved, assistant echoes confirmation ("Saved: I'll be more direct with you") — user can verify capture without querying the database
 
 ### Context Budget Management
@@ -56,8 +56,8 @@ Add after v1 base is validated in real use.
 | FOUND-02 | Phase 1 | Complete |
 | PERS-01 | Phase 2 | Complete |
 | PERS-04 | Phase 2 | Complete |
-| PERS-02 | Phase 3 | Pending |
-| PERS-03 | Phase 3 | Pending |
+| PERS-02 | Phase 3 | Complete |
+| PERS-03 | Phase 3 | Complete |
 | CTX-01 | Phase 3 | Pending |
 | CTX-02 | Phase 3 | Pending |
 | CTX-03 | Phase 3 | Pending |
