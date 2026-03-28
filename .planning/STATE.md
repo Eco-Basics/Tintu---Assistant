@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-foundation 01-01-PLAN.md
-last_updated: "2026-03-28T16:23:29.321Z"
+stopped_at: Completed 01-foundation 01-02-PLAN.md
+last_updated: "2026-03-28T16:29:30.000Z"
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 11
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 1 of 2
+Plan: 2 of 2 (COMPLETE)
 
 ## Performance Metrics
 
@@ -61,6 +61,9 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Monkeypatch target is app.bot.router.classify (imported name), not app.llm.classifier.classify — router uses from-import binding
 - [Phase 01-foundation]: CAPABILITY_REFUSALS guard placed after draft_reply block, before build_answer — preserves all existing intent dispatch
 - [Phase 01-foundation]: Test env stubs set via os.environ.setdefault in conftest.py so app.config imports don't raise KeyError during tests
+- [Phase 01-foundation 01-02]: No behavior_preferences table — preferences table fulfills that role; Phase 2 PromptBuilder reads from preferences
+- [Phase 01-foundation 01-02]: personality_traits.confidence REAL DEFAULT 1.0 added now to avoid ALTER TABLE when DIFF-02 ships
+- [Phase 01-foundation 01-02]: personas.is_active single-active enforcement is application-layer only, not a DB constraint
 
 ### Pending Todos
 
@@ -100,6 +103,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T16:23:29.314Z
-Stopped at: Completed 01-foundation 01-01-PLAN.md
+Last session: 2026-03-28T16:29:30.000Z
+Stopped at: Completed 01-foundation 01-02-PLAN.md
 Resume file: None

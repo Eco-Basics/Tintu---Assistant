@@ -12,7 +12,7 @@ Three phases deliver the complete Goal 1 personality system on top of the existi
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Capability refusal guard and additive DB schema migrations
+- [x] **Phase 1: Foundation** - Capability refusal guard and additive DB schema migrations
 - [ ] **Phase 2: PromptBuilder** - Dynamic system prompt assembled from preferences DB on every request
 - [ ] **Phase 3: Context Budget Manager** - Conversation history, session summarization, 8k token enforcement, active tasks, continuity signal
 
@@ -29,8 +29,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Test scaffold (pytest) + capability refusal guard in router.py (FOUND-01)
-- [ ] 01-02-PLAN.md — personality_traits and personas schema migration in models.py (FOUND-02)
+- [x] 01-01-PLAN.md — Test scaffold (pytest) + capability refusal guard in router.py (FOUND-01)
+- [x] 01-02-PLAN.md — personality_traits and personas schema migration in models.py (FOUND-02)
 
 ### Phase 2: PromptBuilder
 **Goal**: Every Ollama call uses a system prompt assembled from the user's stored preferences and personality traits — stored personality is reflected in every answer
@@ -75,6 +75,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
+| 1. Foundation | 2/2 | COMPLETE | 2026-03-28 |
 | 2. PromptBuilder | 0/4 | Not started | - |
 | 3. Context Budget Manager | 0/5 | Not started | - |
