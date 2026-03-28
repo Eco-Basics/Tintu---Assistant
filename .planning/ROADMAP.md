@@ -59,7 +59,14 @@ Plans:
   3. The assembled context (system prompt + history + tasks + memory + message) never exceeds 8,192 tokens as confirmed by Ollama's prompt_eval_count field — the budget manager enforces the hard limit
   4. At the start of a new session, the assistant explicitly signals whether a prior session summary is available — the user is never silently surprised by a context reset
   5. Up to 5 active tasks are mentioned in the assistant's responses when relevant — the assistant is aware of current work without the user restating it
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — DB migrations (conversation_turns table + key_facts/named_entities columns) + 15 test stubs (PERS-02, PERS-03)
+- [ ] 03-02-PLAN.md — ConversationCache + write_conversation_turn in handlers.py + startup reload in main.py (PERS-02)
+- [ ] 03-03-PLAN.md — ContextBudgetManager (assemble_context, 8192 limit, oldest-first trim) + wire into build_* functions + active task injection (CTX-01, CTX-02)
+- [ ] 03-04-PLAN.md — Summarization at 20 turns + /summarize command + key_facts correction flow (PERS-03)
+- [ ] 03-05-PLAN.md — Session continuity signal (seamless/resume/fresh) in load_conversation_state + handlers.py emit once (CTX-03)
 
 ## Progress
 
@@ -70,4 +77,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 0/2 | Not started | - |
 | 2. PromptBuilder | 0/4 | Not started | - |
-| 3. Context Budget Manager | 0/TBD | Not started | - |
+| 3. Context Budget Manager | 0/5 | Not started | - |
