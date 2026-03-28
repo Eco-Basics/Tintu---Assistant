@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import re
 from app.llm.classifier import classify
@@ -72,7 +73,7 @@ def _parse_kv(text: str) -> dict[str, str]:
     return result
 
 
-async def route(message: str) -> str:
+async def route(message: str, chat_id: int | None = None) -> str:
     intent = await classify(message)
     logger.info(f"Intent: {intent} | message: {message[:60]!r}")
 
@@ -214,11 +215,11 @@ async def route(message: str) -> str:
 
     # ── Retrieval ─────────────────────────────────────────────────────────────
     if intent == "retrieval_query":
-        return await build_retrieval_answer(message)
+        return await build_retrieval_answer(message, chat_id=chat_id)
 
     # ── Compare ───────────────────────────────────────────────────────────────
     if intent == "compare_context":
-        return await build_compare_answer(message)
+        return await build_compare_answer(message, chat_id=chat_id)
 
     # ── Daily summary ─────────────────────────────────────────────────────────
     if intent == "daily_summary":
@@ -228,13 +229,26 @@ async def route(message: str) -> str:
     if intent == "end_of_day_review":
         return await generate_eod_review()
 
+    # ── Summarize ─────────────────────────────────────────────────────────────
+    if intent == "summarize" or message.strip().lower() in ("/summarize", "summarize"):
+        if chat_id:
+            from app.memory.summarizer import generate_session_summary
+            asyncio.create_task(_run_summary(chat_id))
+        return "Summarizing your session... I'll send you the summary in a moment."
+
     # ── Draft ─────────────────────────────────────────────────────────────────
     if intent == "draft_reply":
+        if chat_id:
+            from app.llm.context_manager import ContextBudgetManager
+            ctx = ContextBudgetManager(chat_id)
+            assembled = await ctx.assemble_context(message)
+            draft_prompt = f"Draft the following. Return only the draft text, no preamble:\n\n{message}"
+            if assembled["history_block"]:
+                draft_prompt = f"{assembled['history_block']}Current message: {draft_prompt}"
+        else:
+            draft_prompt = f"Draft the following. Return only the draft text, no preamble:\n\n{message}"
         system = await build_system_prompt()
-        draft = await generate(
-            f"Draft the following. Return only the draft text, no preamble:\n\n{message}",
-            system=system,
-        )
+        draft = await generate(draft_prompt, system=system)
         return f"*Draft:*\n\n{draft}\n\n_Reply 'send it' or 'post this' to confirm, or ignore to discard._"
 
     # ── Capability refusal (general_answer only) ──────────────────────────────
@@ -245,4 +259,13 @@ async def route(message: str) -> str:
             return refusal
 
     # ── Default: answer ───────────────────────────────────────────────────────
-    return await build_answer(message)
+    return await build_answer(message, chat_id=chat_id)
+
+
+async def _run_summary(chat_id: int) -> None:
+    """Fire-and-forget summary generation from router. Used by /summarize command."""
+    try:
+        from app.memory.summarizer import generate_session_summary
+        await generate_session_summary(chat_id)
+    except Exception as e:
+        logger.error(f"_run_summary error: {e}")
