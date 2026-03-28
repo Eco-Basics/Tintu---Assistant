@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 async def run_migrations():
     logger.info("Running database migrations...")
-    async with await get_db() as db:
+    async with get_db() as db:
         await db.executescript(SCHEMA)
         # Additive: add key_facts and named_entities to conversation_summaries
         for col, col_type in [("key_facts", "TEXT"), ("named_entities", "TEXT")]:
