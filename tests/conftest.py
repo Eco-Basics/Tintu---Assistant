@@ -55,3 +55,27 @@ async def async_db():
         await db.executescript(FIXTURE_SCHEMA)
         await db.commit()
         yield db
+
+
+# ── Phase 3: context-budget-manager ─────────────────────────────────────────
+from app.storage.models import SCHEMA as FULL_SCHEMA  # noqa: E402
+
+
+@pytest_asyncio.fixture
+async def db():
+    """In-memory aiosqlite with full schema including conversation_turns."""
+    async with aiosqlite.connect(":memory:") as conn:
+        conn.row_factory = aiosqlite.Row
+        await conn.execute("PRAGMA journal_mode=WAL")
+        await conn.execute("PRAGMA foreign_keys=ON")
+        await conn.executescript(FULL_SCHEMA)
+        # Additive columns for Phase 3
+        for col, col_type in [("key_facts", "TEXT"), ("named_entities", "TEXT")]:
+            try:
+                await conn.execute(
+                    f"ALTER TABLE conversation_summaries ADD COLUMN {col} {col_type}"
+                )
+            except Exception:
+                pass
+        await conn.commit()
+        yield conn
