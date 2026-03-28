@@ -26,7 +26,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Sending a code, math, or research request to the bot receives a clear refusal message before any Ollama call is made — no hallucinated code or math output ever reaches the user
   2. The SQLite database contains the personality_traits, behavior_preferences, personas, and conversation_summaries tables after migration — verified by schema inspection with no existing rows lost
   3. Both assistant-mithu and assistant-friend bots apply the capability refusal check independently — one bot's configuration does not affect the other
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Test scaffold (pytest) + capability refusal guard in router.py (FOUND-01)
+- [ ] 01-02-PLAN.md — personality_traits and personas schema migration in models.py (FOUND-02)
 
 ### Phase 2: PromptBuilder
 **Goal**: Every Ollama call uses a system prompt assembled from the user's stored preferences and personality traits — stored personality is reflected in every answer
@@ -58,6 +62,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/2 | Not started | - |
 | 2. PromptBuilder | 0/TBD | Not started | - |
 | 3. Context Budget Manager | 0/TBD | Not started | - |
