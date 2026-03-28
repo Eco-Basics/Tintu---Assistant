@@ -9,7 +9,7 @@ Requirements for this milestone. All map to roadmap phases.
 
 ### Foundation
 
-- [ ] **FOUND-01**: System refuses code, math, and research requests before generation via pre-generation keyword check — no hallucinated answers
+- [x] **FOUND-01**: System refuses code, math, and research requests before generation via pre-generation keyword check — no hallucinated answers
 - [ ] **FOUND-02**: Database schema is extended with additive migrations for personality_traits, behavior_preferences, personas, conversation_summaries tables — no data loss to existing rows
 
 ### Personality Layer (PromptBuilder)
@@ -52,7 +52,7 @@ Add after v1 base is validated in real use.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
 | FOUND-02 | Phase 1 | Pending |
 | PERS-01 | Phase 2 | Pending |
 | PERS-04 | Phase 2 | Pending |
