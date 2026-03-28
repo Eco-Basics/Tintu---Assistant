@@ -50,25 +50,23 @@ Add after v1 base is validated in real use.
 
 ## Traceability
 
-Populated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | — | Pending |
-| FOUND-02 | — | Pending |
-| PERS-01 | — | Pending |
-| PERS-02 | — | Pending |
-| PERS-03 | — | Pending |
-| PERS-04 | — | Pending |
-| CTX-01 | — | Pending |
-| CTX-02 | — | Pending |
-| CTX-03 | — | Pending |
+| FOUND-01 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Pending |
+| PERS-01 | Phase 2 | Pending |
+| PERS-04 | Phase 2 | Pending |
+| PERS-02 | Phase 3 | Pending |
+| PERS-03 | Phase 3 | Pending |
+| CTX-01 | Phase 3 | Pending |
+| CTX-02 | Phase 3 | Pending |
+| CTX-03 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 9 total
-- Mapped to phases: 0
-- Unmapped: 9 ⚠️ (pending roadmap)
+- Mapped to phases: 9
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-28*
-*Last updated: 2026-03-28 after initial definition*
+*Last updated: 2026-03-28 after roadmap creation*
