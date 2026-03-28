@@ -119,4 +119,12 @@ CREATE TABLE IF NOT EXISTS personas (
     is_active   INTEGER DEFAULT 0,
     created_at  TEXT DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS conversation_turns (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    chat_id     INTEGER NOT NULL,
+    role        TEXT NOT NULL CHECK(role IN ('user', 'assistant')),
+    content     TEXT NOT NULL,
+    created_at  TEXT DEFAULT (datetime('now'))
+);
 """
