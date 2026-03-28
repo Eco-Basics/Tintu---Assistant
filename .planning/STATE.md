@@ -77,7 +77,12 @@ None yet.
 
 - **[VERIFY — Phase 1 execution]** Keyword patterns in CAPABILITY_REFUSALS must cover the most common hallucination triggers for code/math/research. Review during Phase 1 execution: if obvious requests slip through, expand the keyword list before closing.
 - **[VERIFY — Phase 1 execution]** classify() edge cases: messages like "remind me to look up how to code X" should route to set_reminder, not answer. Validate with real test messages during Phase 1 UAT.
-- **[RISK — Phase 2 planning]** The existing `preferences` table (key/value/source) is assumed compatible with Phase 2 PromptBuilder. Verify during Phase 2 discuss-phase: if PromptBuilder needs structured columns, a Phase 2.1 migration may be needed. Do NOT add columns preemptively.
+- **[RISK — Phase 2 planning]** ~~The existing `preferences` table (key/value/source) is assumed compatible with Phase 2 PromptBuilder.~~ **RESOLVED in Phase 2 discuss-phase** — preferences table confirmed compatible, no migration needed.
+
+### Open Risks (Phase 2 Audit — address at first relevant phase)
+
+- **[VERIFY — Phase 2 execution]** systemd service file may not have LOG_LEVEL=DEBUG set — Python side is fixed by plan 02-01, but the env var must also be present in the systemd unit. Check `systemd/assistant-mithu.service` and `systemd/assistant-friend.service` for `Environment=LOG_LEVEL=DEBUG` during Phase 2 UAT.
+- **[RISK — Phase 2 execution]** Preference echo template `f"Saved: I'll {source}..."` assumes PREFERENCE_EXTRACT_PROMPT always returns action-verb phrased source text. Edge cases (e.g. noun-phrased source like "direct communication") may produce awkward output. Review during Phase 2 UAT and tune the template if needed.
 
 ## Session Continuity
 
