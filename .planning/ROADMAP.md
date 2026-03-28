@@ -41,7 +41,13 @@ Plans:
   2. After updating a preference, the bot replies with an explicit confirmation ("Saved: I'll be more direct with you") — the user can verify capture without querying the database
   3. A preference set in one session is still active in a new session started after restarting the bot service — personality survives process restarts
   4. The DEBUG log shows the assembled system prompt string on every Ollama call — personality injection is verifiable without a database query
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Test scaffold + LOG_LEVEL env var fix (PERS-01, PERS-04 Wave 0)
+- [ ] 02-02-PLAN.md — build_system_prompt() TDD implementation in app/llm/prompt_builder.py (PERS-01)
+- [ ] 02-03-PLAN.md — Add system param to compare_against_prior() in comparison.py (PERS-01)
+- [ ] 02-04-PLAN.md — Wire dynamic prompt into all 4 call sites + preference echo (PERS-01, PERS-04)
 
 ### Phase 3: Context Budget Manager
 **Goal**: The assistant holds multi-turn conversations, remembers specific facts across sessions, stays within the 8k token window, and signals when it starts fresh
@@ -63,5 +69,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 0/2 | Not started | - |
-| 2. PromptBuilder | 0/TBD | Not started | - |
+| 2. PromptBuilder | 0/4 | Not started | - |
 | 3. Context Budget Manager | 0/TBD | Not started | - |
