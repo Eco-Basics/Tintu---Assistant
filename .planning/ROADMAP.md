@@ -24,7 +24,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Requirements**: FOUND-01, FOUND-02
 **Success Criteria** (what must be TRUE):
   1. Sending a code, math, or research request to the bot receives a clear refusal message before any Ollama call is made — no hallucinated code or math output ever reaches the user
-  2. The SQLite database contains the personality_traits, behavior_preferences, personas, and conversation_summaries tables after migration — verified by schema inspection with no existing rows lost
+  2. The SQLite database contains the personality_traits and personas tables after migration, and the existing preferences table serves the behavior_preferences role — verified by schema inspection with no existing rows lost
   3. Both assistant-mithu and assistant-friend bots apply the capability refusal check independently — one bot's configuration does not affect the other
 **Plans**: 2 plans
 
