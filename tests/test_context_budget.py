@@ -12,19 +12,49 @@ import pytest_asyncio
 @pytest.mark.asyncio
 async def test_conversation_turns_table(db):
     """conversation_turns table accepts user/assistant rows."""
-    raise NotImplementedError
+    await db.execute(
+        "INSERT INTO conversation_turns (chat_id, role, content) VALUES (?, ?, ?)",
+        (12345, "user", "hello")
+    )
+    await db.execute(
+        "INSERT INTO conversation_turns (chat_id, role, content) VALUES (?, ?, ?)",
+        (12345, "assistant", "hi there")
+    )
+    await db.commit()
+    async with db.execute(
+        "SELECT role, content FROM conversation_turns WHERE chat_id = ? ORDER BY id",
+        (12345,)
+    ) as cur:
+        rows = await cur.fetchall()
+    assert len(rows) == 2
+    assert rows[0][0] == "user"
+    assert rows[1][0] == "assistant"
+    assert rows[1][1] == "hi there"
 
 
 @pytest.mark.asyncio
 async def test_conversation_summaries_columns(db):
     """conversation_summaries has key_facts and named_entities columns."""
-    raise NotImplementedError
+    async with db.execute("PRAGMA table_info(conversation_summaries)") as cur:
+        rows = await cur.fetchall()
+    col_names = [r[1] for r in rows]
+    assert "key_facts" in col_names, f"key_facts missing, got: {col_names}"
+    assert "named_entities" in col_names, f"named_entities missing, got: {col_names}"
 
 
 @pytest.mark.asyncio
 async def test_history_append_and_cap(db):
-    """In-memory history cache caps at 8 turns (16 messages) per PERS-02."""
-    raise NotImplementedError
+    """In-memory history cache caps at 16 messages (8 turns) per PERS-02."""
+    from app.llm.conversation_state import ConversationCache
+    cache = ConversationCache()
+    for i in range(10):
+        cache.append(999, "user", f"msg {i}")
+        cache.append(999, "assistant", f"reply {i}")
+    msgs = cache.get(999)
+    assert len(msgs) == 16, f"Expected 16, got {len(msgs)}"
+    # Oldest dropped: first entry should be msg 2 (index 0 after trim)
+    assert msgs[0]["content"] == "msg 2"
+    assert msgs[-1]["content"] == "reply 9"
 
 
 @pytest.mark.asyncio
@@ -43,7 +73,26 @@ async def test_extraction_calls_no_history(db):
 @pytest.mark.asyncio
 async def test_reload_on_startup(db):
     """load_conversation_state() populates in-memory cache from conversation_turns rows."""
-    raise NotImplementedError
+    import asyncio
+    from unittest.mock import patch, AsyncMock
+    from app.llm.conversation_state import ConversationCache, load_conversation_state
+
+    rows_data = [
+        {"role": "user", "content": "first message"},
+        {"role": "assistant", "content": "first reply"},
+        {"role": "user", "content": "second message"},
+    ]
+
+    async def mock_fetchall(query, params):
+        return rows_data
+
+    fresh_cache = ConversationCache()
+    with patch("app.llm.conversation_state.fetchall", mock_fetchall), \
+         patch("app.llm.conversation_state.history_cache", fresh_cache):
+        result = await load_conversation_state(12345)
+
+    assert len(result) == 3
+    assert fresh_cache.get(12345) == rows_data
 
 
 # ── Plan 03-03: Token budget (CTX-01, CTX-02) ────────────────────────────────
