@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 03-context-budget-manager 03-01-PLAN.md
-last_updated: "2026-03-28T17:42:49.438Z"
+stopped_at: Completed 03-context-budget-manager 03-02-PLAN.md
+last_updated: "2026-03-28T17:50:21.998Z"
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 11
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -51,6 +51,7 @@ Plan: 1 of 5
 | Phase 02-promptbuilder P01 | 15 | 2 tasks | 4 files |
 | Phase 02-promptbuilder P04 | 5 | 3 tasks | 4 files |
 | Phase 03-context-budget-manager P01 | 5 | 2 tasks | 4 files |
+| Phase 03-context-budget-manager P02 | 11 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ Recent decisions affecting current work:
 - [Phase 02-promptbuilder]: Patch target for build_system_prompt mock is app.llm.response_builder.build_system_prompt (from-import binding) — same lesson as Phase 1 router.py monkeypatching
 - [Phase 03-context-budget-manager]: key_facts and named_entities added via ALTER TABLE in run_migrations(), not in SCHEMA — avoids schema drift for existing DBs
 - [Phase 03-context-budget-manager]: db fixture imports FULL_SCHEMA directly from app.storage.models so fixture stays in sync with production schema
+- [Phase 03-context-budget-manager]: Turns written AFTER reply_text so user gets response even if DB write fails
+- [Phase 03-context-budget-manager]: history_cache module singleton imported directly — consistent with execute/fetchall pattern in codebase
+- [Phase 03-context-budget-manager]: [03-02] From-import patch target is app.llm.conversation_state.fetchall — same lesson as Phase 1 router.py monkeypatching
 
 ### Pending Todos
 
@@ -115,6 +119,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T17:42:49.421Z
-Stopped at: Completed 03-context-budget-manager 03-01-PLAN.md
+Last session: 2026-03-28T17:50:21.993Z
+Stopped at: Completed 03-context-budget-manager 03-02-PLAN.md
 Resume file: None
