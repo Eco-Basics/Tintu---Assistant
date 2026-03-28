@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-foundation 01-02-PLAN.md
-last_updated: "2026-03-28T16:37:15.454Z"
+stopped_at: Completed 02-promptbuilder 02-03-PLAN.md
+last_updated: "2026-03-28T17:00:22.452Z"
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 11
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Each user gets an assistant that genuinely adapts to them — remembering preferences, speaking in a shaped style, staying within honest capabilities.
-**Current focus:** Phase 01 — foundation
+**Current focus:** Phase 02 — promptbuilder
 
 ## Current Position
 
-Phase: 01 (foundation) — EXECUTING
-Plan: 2 of 2 (COMPLETE)
+Phase: 02 (promptbuilder) — EXECUTING
+Plan: 1 of 4
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: 2 of 2 (COMPLETE)
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 10 | 2 tasks | 6 files |
+| Phase 02-promptbuilder P03 | 2 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,7 @@ Recent decisions affecting current work:
 - [Phase 01-foundation 01-02]: No behavior_preferences table — preferences table fulfills that role; Phase 2 PromptBuilder reads from preferences
 - [Phase 01-foundation 01-02]: personality_traits.confidence REAL DEFAULT 1.0 added now to avoid ALTER TABLE when DIFF-02 ships
 - [Phase 01-foundation 01-02]: personas.is_active single-active enforcement is application-layer only, not a DB constraint
+- [Phase 02-promptbuilder]: Default system='' in compare_against_prior() preserves backward compatibility — existing callers with no system arg are unaffected
 
 ### Pending Todos
 
@@ -103,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T16:29:30.000Z
-Stopped at: Completed 01-foundation 01-02-PLAN.md
+Last session: 2026-03-28T17:00:22.448Z
+Stopped at: Completed 02-promptbuilder 02-03-PLAN.md
 Resume file: None
