@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-28T08:51:29.418Z"
+stopped_at: Phase 2 context gathered
+last_updated: "2026-03-28T10:07:56.859Z"
 last_activity: 2026-03-28 — Roadmap created, 9 requirements mapped to 3 phases
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
+  total_plans: 2
   completed_plans: 0
   percent: 0
 ---
@@ -73,8 +73,14 @@ None yet.
 - Hetzner VPS not yet provisioned — code can be written and unit-tested locally first
 - Friend's Telegram token/ID/timezone TBD — only affects assistant-friend deployment, not development
 
+### Open Risks (Phase 1 Audit — address at first relevant phase)
+
+- **[VERIFY — Phase 1 execution]** Keyword patterns in CAPABILITY_REFUSALS must cover the most common hallucination triggers for code/math/research. Review during Phase 1 execution: if obvious requests slip through, expand the keyword list before closing.
+- **[VERIFY — Phase 1 execution]** classify() edge cases: messages like "remind me to look up how to code X" should route to set_reminder, not answer. Validate with real test messages during Phase 1 UAT.
+- **[RISK — Phase 2 planning]** The existing `preferences` table (key/value/source) is assumed compatible with Phase 2 PromptBuilder. Verify during Phase 2 discuss-phase: if PromptBuilder needs structured columns, a Phase 2.1 migration may be needed. Do NOT add columns preemptively.
+
 ## Session Continuity
 
-Last session: 2026-03-28T08:51:29.414Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation/01-CONTEXT.md
+Last session: 2026-03-28T10:07:56.854Z
+Stopped at: Phase 2 context gathered
+Resume file: .planning/phases/02-promptbuilder/02-CONTEXT.md
