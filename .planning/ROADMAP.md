@@ -13,7 +13,7 @@ Three phases deliver the complete Goal 1 personality system on top of the existi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Capability refusal guard and additive DB schema migrations
-- [ ] **Phase 2: PromptBuilder** - Dynamic system prompt assembled from preferences DB on every request
+- [x] **Phase 2: PromptBuilder** - Dynamic system prompt assembled from preferences DB on every request (completed 2026-03-28)
 - [ ] **Phase 3: Context Budget Manager** - Conversation history, session summarization, 8k token enforcement, active tasks, continuity signal
 
 ## Phase Details
@@ -76,5 +76,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-03-28 |
-| 2. PromptBuilder | 3/4 | In Progress|  |
+| 2. PromptBuilder | 4/4 | Complete   | 2026-03-28 |
 | 3. Context Budget Manager | 0/5 | Not started | - |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 02-promptbuilder 02-01-PLAN.md
-last_updated: "2026-03-28T17:10:02.765Z"
+stopped_at: Completed 02-promptbuilder 02-04-PLAN.md
+last_updated: "2026-03-28T17:21:25.952Z"
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 11
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 
 ## Current Position
 
-Phase: 02 (promptbuilder) — EXECUTING
-Plan: 2 of 4
+Phase: 02 (promptbuilder) — COMPLETE
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -49,6 +49,7 @@ Plan: 2 of 4
 | Phase 01-foundation P01 | 10 | 2 tasks | 6 files |
 | Phase 02-promptbuilder P03 | 2 | 1 tasks | 1 files |
 | Phase 02-promptbuilder P01 | 15 | 2 tasks | 4 files |
+| Phase 02-promptbuilder P04 | 5 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,7 @@ Recent decisions affecting current work:
 - [Phase 02-promptbuilder 02-02]: async_db fixture uses aiosqlite.Row factory so row['key'] dict-style access works correctly in tests
 - [Phase 02-promptbuilder]: test_prompt_builder.py uses direct import (not importorskip) because prompt_builder.py already existed from prior work
 - [Phase 02-promptbuilder]: [02-01] pytest.ini extended with testpaths=tests for explicit discovery scope; conftest.py extended not overwritten per RISK note
+- [Phase 02-promptbuilder]: Patch target for build_system_prompt mock is app.llm.response_builder.build_system_prompt (from-import binding) — same lesson as Phase 1 router.py monkeypatching
 
 ### Pending Todos
 
@@ -110,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T17:10:02.755Z
-Stopped at: Completed 02-promptbuilder 02-01-PLAN.md
+Last session: 2026-03-28T17:21:25.934Z
+Stopped at: Completed 02-promptbuilder 02-04-PLAN.md
 Resume file: None
