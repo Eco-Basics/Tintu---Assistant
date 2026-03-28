@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Capability refusal guard and additive DB schema migrations
 - [x] **Phase 2: PromptBuilder** - Dynamic system prompt assembled from preferences DB on every request (completed 2026-03-28)
-- [ ] **Phase 3: Context Budget Manager** - Conversation history, session summarization, 8k token enforcement, active tasks, continuity signal
+- [x] **Phase 3: Context Budget Manager** - Conversation history, session summarization, 8k token enforcement, active tasks, continuity signal (completed 2026-03-28)
 
 ## Phase Details
 
@@ -77,4 +77,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete    | 2026-03-28 |
 | 2. PromptBuilder | 4/4 | Complete    | 2026-03-28 |
-| 3. Context Budget Manager | 4/5 | In Progress|  |
+| 3. Context Budget Manager | 5/5 | Complete   | 2026-03-28 |

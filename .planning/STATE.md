@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 03-context-budget-manager 03-04-PLAN.md
-last_updated: "2026-03-28T18:20:00.000Z"
+stopped_at: Completed 03-context-budget-manager 03-05-PLAN.md
+last_updated: "2026-03-28T18:28:03.082Z"
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 11
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -54,6 +54,7 @@ Plan: 4 of 5 (completed 03-04)
 | Phase 03-context-budget-manager P02 | 11 | 2 tasks | 4 files |
 | Phase 03-context-budget-manager P03 | 8 | 2 tasks | 5 files |
 | Phase 03-context-budget-manager P04 | 25 | 2 tasks | 4 files |
+| Phase 03-context-budget-manager PP05 | 8 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,9 @@ Recent decisions affecting current work:
 - [Phase 03-context-budget-manager]: response_builder.py uses static SYSTEM_PROMPT import; ContextBudgetManager centralises context assembly
 - [Phase 03-context-budget-manager 03-04]: _pending_corrections module-level dict bridges summarize_and_notify() result to message_handler — context.user_data inaccessible in background tasks
 - [Phase 03-context-budget-manager 03-04]: generate_session_summary queries only turns after last summary created_at to avoid re-summarizing compressed history
+- [Phase 03-context-budget-manager]: load_conversation_state return type changed from list[dict] to dict with messages/signal/summary_text — callers updated
+- [Phase 03-context-budget-manager]: bot_data used for continuity signal (not user_data) because it is set at startup before any user message arrives
+- [Phase 03-context-budget-manager]: bot_data.pop() for one-shot signal: first message handler reads and clears it — subsequent messages get no prefix
 
 ### Pending Todos
 
@@ -125,6 +129,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T18:20:00.000Z
-Stopped at: Completed 03-context-budget-manager 03-04-PLAN.md
+Last session: 2026-03-28T18:28:03.069Z
+Stopped at: Completed 03-context-budget-manager 03-05-PLAN.md
 Resume file: None

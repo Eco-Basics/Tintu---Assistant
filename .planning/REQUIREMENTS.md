@@ -23,7 +23,7 @@ Requirements for this milestone. All map to roadmap phases.
 
 - [x] **CTX-01**: A ContextBudgetManager enforces hard per-slot token limits (system prompt, history, retrieved memory, active tasks) — total context stays within 8k window regardless of session length
 - [x] **CTX-02**: Up to 5 most urgent/recent active tasks are injected into each answer via the context budget slot — assistant is aware of current work without the user restating it
-- [ ] **CTX-03**: On the first message of a new session, assistant signals whether prior session summary is available — user is never silently surprised by a context reset
+- [x] **CTX-03**: On the first message of a new session, assistant signals whether prior session summary is available — user is never silently surprised by a context reset
 
 ## v1.x Requirements
 
@@ -60,7 +60,7 @@ Add after v1 base is validated in real use.
 | PERS-03 | Phase 3 | Complete |
 | CTX-01 | Phase 3 | Complete |
 | CTX-02 | Phase 3 | Complete |
-| CTX-03 | Phase 3 | Pending |
+| CTX-03 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 9 total
