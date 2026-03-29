@@ -1,0 +1,69 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-03-29T00:42:26.329Z",
+  "phase": "03",
+  "phase_name": "context-budget-manager",
+  "phase_dir": ".planning/phases/03-context-budget-manager",
+  "plan": 5,
+  "task": 2,
+  "total_tasks": 2,
+  "status": "milestone_complete_vps_pending",
+  "completed_tasks": [
+    {"id": "01-01", "name": "Test scaffold + capability refusal guard", "status": "done", "commit": "8f964f1"},
+    {"id": "01-02", "name": "personality_traits + personas schema migration", "status": "done", "commit": "0d99c10"},
+    {"id": "02-01", "name": "Phase 2 test scaffold + LOG_LEVEL fix", "status": "done", "commit": "2f008d0"},
+    {"id": "02-02", "name": "build_system_prompt() TDD", "status": "done", "commit": "ddffc14"},
+    {"id": "02-03", "name": "system param on compare_against_prior()", "status": "done", "commit": "057fb7e"},
+    {"id": "02-04", "name": "Wire dynamic prompt into all 4 call sites + preference echo", "status": "done", "commit": "a98de30"},
+    {"id": "03-01", "name": "DB migrations + 15 test stubs", "status": "done", "commit": "6f45531"},
+    {"id": "03-02", "name": "ConversationCache + turn persistence + startup reload", "status": "done", "commit": "e5c1bab"},
+    {"id": "03-03", "name": "ContextBudgetManager + 4 call-site wiring", "status": "done", "commit": "1b21225"},
+    {"id": "03-04", "name": "20-turn summarizer + /summarize + key_facts correction", "status": "done", "commit": "97fa6a7"},
+    {"id": "03-05", "name": "Session continuity signal (CTX-03)", "status": "done", "commit": "48960a1"}
+  ],
+  "remaining_tasks": [],
+  "blockers": [
+    {
+      "description": "Windows Python 3.13 missing tzdata — zoneinfo.ZoneInfo('UTC') fails",
+      "type": "technical",
+      "workaround": "Fixed in app/utils/time.py — uses datetime.timezone.utc for UTC. Non-UTC zones still need tzdata (fine on Linux VPS).",
+      "status": "resolved"
+    },
+    {
+      "description": "aiosqlite double thread-start — async with await get_db() pattern broken",
+      "type": "technical",
+      "workaround": "Fixed in app/storage/db.py — converted get_db() to @asynccontextmanager. All callers now use async with get_db().",
+      "status": "resolved"
+    }
+  ],
+  "human_actions_pending": [
+    {
+      "action": "Connect to VPS and run 5 deferred verification items",
+      "context": "All structural tests pass (33/33). Live Ollama required for: PERS-02 history recall, CTX-01 token budget, CTX-02 task injection, CTX-03 restart signal, PERS-03 20-turn auto-summarize.",
+      "blocking": false,
+      "reference": ".planning/phases/03-context-budget-manager/03-VERIFICATION.md — Human Verification Deferred section"
+    },
+    {
+      "action": "Install python-telegram-bot[job-queue] on VPS",
+      "context": "Scheduled reminders (jobs.py) require the job-queue extra. Currently disabled on Windows dev — will work on Linux VPS.",
+      "blocking": false
+    }
+  ],
+  "decisions": [
+    {"decision": "capability refusal is keyword+intent based (not intent-only)", "rationale": "Catches misclassified messages — double defence", "phase": "01"},
+    {"decision": "No behavior_preferences table — existing preferences table fulfils that role", "rationale": "Avoided unnecessary migration; Phase 2 reads from preferences directly", "phase": "01"},
+    {"decision": "build_system_prompt() assembles preferences + personality_traits + active persona", "rationale": "All 3 sources needed for full personality expression", "phase": "02"},
+    {"decision": "ContextBudgetManager wraps system prompt + history + tasks — replaces bare build_system_prompt() in call sites", "rationale": "Single assembly point for full context; Phase 2 prompt becomes one section within the budget", "phase": "03"},
+    {"decision": "History cap: 16 messages (8 exchanges) in-memory, full history in DB", "rationale": "Balance between context richness and token budget; summaries capture what cache drops", "phase": "03"},
+    {"decision": "Token trim: oldest history pairs first, never trim system prompt or current message", "rationale": "Preserves identity and current query; sacrifices oldest context first", "phase": "03"}
+  ],
+  "uncommitted_files": [
+    ".planning/config.json (model_profile budget, _auto_chain_active false — minor config drift, safe to commit or ignore)",
+    ".planning/phases/01-foundation/DEMO.md (untracked — created this session)",
+    ".planning/phases/02-promptbuilder/DEMO.md (untracked — created this session)",
+    ".env (untracked — contains secrets, do NOT commit)"
+  ],
+  "test_status": "33/33 passing",
+  "next_action": "Connect VPS, start Ollama, run python -m app.main, then execute the 5 deferred verification steps in 03-VERIFICATION.md",
+  "context_notes": "Milestone v1.0 fully executed and verified structurally. Bot runs on Windows dev machine — started OK, tasks/notes work, tzdata and db bugs found and fixed during live testing. Deferred 5 live-Ollama checks to VPS. All 11 plans across 3 phases committed. MILESTONE-DEMO.md written."
+}
