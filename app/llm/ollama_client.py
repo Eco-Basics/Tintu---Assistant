@@ -23,10 +23,12 @@ async def generate(
         payload["system"] = system
 
     try:
+        logger.info(f"Ollama request start: model={model} prompt_len={len(prompt)}")
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(f"{OLLAMA_BASE_URL}/api/generate", json=payload)
             response.raise_for_status()
             raw = response.json().get("response", "").strip()
+            logger.info(f"Ollama response received: {len(raw)} chars")
             return _strip_thinking(raw)
     except httpx.TimeoutException:
         logger.error("Ollama request timed out")
