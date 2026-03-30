@@ -22,6 +22,7 @@ async def generate(
     system: str = "",
     model: str = OLLAMA_MODEL,
     timeout: int = 300,
+    num_predict: int = 512,
 ) -> str:
     # Use /api/chat — think:false works correctly here (unlike /api/generate, see Ollama #14793)
     messages = []
@@ -35,7 +36,7 @@ async def generate(
         "stream": False,
         "think": False,
         "options": {
-            "num_predict": 512,
+            "num_predict": num_predict,
             "presence_penalty": 1.5,
         },
     }

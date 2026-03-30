@@ -106,7 +106,7 @@ async def classify(message: str) -> str:
         return intent
 
     prompt = CLASSIFICATION_PROMPT.format(message=message)
-    response = await generate(prompt)
+    response = await generate(prompt, timeout=120, num_predict=20)
     result = response.strip().lower()
 
     if result in VALID_TYPES:
