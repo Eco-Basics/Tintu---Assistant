@@ -1,0 +1,20 @@
+[Unit]
+Description=Tintu Assistant Bot
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+User=assistant
+WorkingDirectory=/opt/assistant
+ExecStart=/opt/assistant/venv/bin/python -m app.main
+Restart=on-failure
+RestartSec=10
+EnvironmentFile=/opt/assistant/.env
+
+# Keep logs visible in journalctl
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

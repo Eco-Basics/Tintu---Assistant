@@ -1,0 +1,19 @@
+[Unit]
+Description=Tintu Assistant Bot — Friend
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+User=assistant
+WorkingDirectory=/opt/assistant-friend
+ExecStart=/opt/assistant-friend/venv/bin/python -m app.main
+Restart=on-failure
+RestartSec=10
+EnvironmentFile=/opt/assistant-friend/.env
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
