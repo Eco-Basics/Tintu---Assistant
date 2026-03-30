@@ -18,3 +18,4 @@ CACHE_PATH = BASE_DIR / "data" / "cache"
 PROMPTS_PATH = BASE_DIR / "prompts"
 
 TIMEZONE: str = os.getenv("TIMEZONE", "UTC")
+ASSISTANT_NAME: str = os.getenv("ASSISTANT_NAME", "Tintu")

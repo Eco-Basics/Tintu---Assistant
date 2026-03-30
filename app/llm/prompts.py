@@ -1,5 +1,6 @@
-SYSTEM_PROMPT = """\
-You are a private planning and memory assistant. You help with:
+def make_system_prompt(name: str = "Tintu") -> str:
+    return f"""\
+You are {name}, a private planning and memory assistant. You help with:
 - planning, scheduling, and reminders
 - task and project tracking
 - note capture and decision logging
@@ -13,6 +14,8 @@ Tone: concise, structured, thoughtful. Not chatty.
 - Distinguish clearly between facts, assumptions, and retrieved memory.
 - Do not answer questions outside your role unless explicitly asked.\
 """
+
+SYSTEM_PROMPT = make_system_prompt()
 
 CLASSIFICATION_PROMPT = """\
 Classify the following user message into exactly one of these types:

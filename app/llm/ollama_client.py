@@ -38,6 +38,7 @@ async def generate(
         "options": {
             "num_predict": num_predict,
             "presence_penalty": 1.5,
+            "num_thread": 4,
         },
     }
 

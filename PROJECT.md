@@ -1,10 +1,10 @@
 # Tintu — Project Goals & Decisions
 
-*Last updated: 2026-03-27*
+*Last updated: 2026-03-30*
 
 ---
 
-## Goal 1: Two adaptive personal assistants on Qwen3:4b
+## Goal 1: Two adaptive personal assistants on Qwen3:1.7b
 
 ### What we're building
 
@@ -12,8 +12,8 @@ Two fully independent assistant deployments on a shared Hetzner CX33 VPS. Each s
 
 ### Users
 
-- **Mithu** — user ID `7912940724`
-- **Friend** — separate bot, separate DB, separate vault, separate personality profile
+- **Mithu** — user ID `7912940724`, assistant named **Dene**
+- **Friend** — separate bot, separate DB, separate vault, separate personality profile, assistant named **Ingle**
 
 ### Adaptive personality architecture
 
@@ -35,9 +35,11 @@ Users shape behavior through natural language:
 
 This persists across conversations. The assistant's character evolves as the user uses it.
 
-### Context window management (8k budget)
+### Context window management (32k native, 8k working budget)
 
-Qwen3:4b has an ~8k token context window. Keeping it useful requires discipline. Budget allocation per request:
+Both qwen3:1.7b and qwen3:4b have a **32K token native context window** (not 8K as originally assumed). We maintain a conservative 8K working budget by design — discipline here keeps response times fast and quality consistent, regardless of what the model could technically handle.
+
+Budget allocation per request:
 
 | Slot | Allocation | Content |
 |---|---|---|
@@ -46,7 +48,7 @@ Qwen3:4b has an ~8k token context window. Keeping it useful requires discipline.
 | Retrieved memory | ~1,500 tokens | Vault entries relevant to current query only |
 | Recent conversation | ~3,500 tokens | Last 8–12 turns (trimmed if needed) |
 | Response headroom | ~1,200 tokens | Room for the model to generate |
-| **Total** | **~7,600 tokens** | Leaves ~400 buffer |
+| **Total** | **~7,600 tokens** | Well within 32K; ~24K headroom available if needed |
 
 Rules:
 - **Retrieved memory is selective, not total dump.** Only inject vault entries scored relevant to the current message.
@@ -55,9 +57,19 @@ Rules:
 - **Active tasks cap at 5.** Most urgent/recent only. Full list is available on request.
 - **Personality + prefs are always injected** — they are the character, never dropped.
 
+### Model decision: qwen3:1.7b
+
+Originally planned for qwen3:4b. Switched to qwen3:1.7b after deployment testing showed:
+- qwen3:4b: 2-3 minute response time on CX33 CPU (unusable)
+- qwen3:1.7b: under 5 second response time (acceptable)
+
+Quality impact is minimal for this use case — the capability refusals (math, code, research) mean 4b's stronger reasoning was never being utilized. Both models share the same 32K context window. The 1.7b also uses ~1.1GB less RAM, making dual deployment (Dene + Ingle) more comfortable on the 8GB CX33.
+
+If response quality becomes a concern at 1.7b, the upgrade path is to a GPU-enabled server, not switching back to 4b on CPU.
+
 ### Explicit capability limits
 
-Qwen3:4b is adequate for the assistant's core job. For tasks outside reliable reach, it will say so explicitly rather than hallucinate a poor answer.
+Qwen3:1.7b is adequate for the assistant's core job. For tasks outside reliable reach, it will say so explicitly rather than hallucinate a poor answer.
 
 System prompt will instruct Qwen to flag and decline (or warn) on:
 - Multi-step mathematical computation
@@ -138,10 +150,12 @@ This is Option A's natural upgrade path — same project/session model, better i
 
 ---
 
-## Open items before starting
+## Open items
 
-- [ ] Hetzner CX33 provisioned (Ubuntu 24.04)
+- [x] Hetzner CX33 provisioned (Ubuntu 24.04, Helsinki)
+- [x] Dene (Mithu's bot) deployed and running as systemd service
 - [ ] Friend's Telegram bot token + user ID
 - [ ] Friend's timezone
 - [ ] Decision: do both users want the same base personality starting point, or define separately from day one?
+- [ ] Ingle (friend's bot) deployed to `/opt/assistant-friend/`
 - [ ] Telegram group created with topics enabled (for Goal 2 Option A)

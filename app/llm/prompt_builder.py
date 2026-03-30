@@ -1,12 +1,13 @@
 import logging
-from app.llm.prompts import SYSTEM_PROMPT
+from app.llm.prompts import make_system_prompt
 from app.storage.db import fetchall
+from app.config import ASSISTANT_NAME
 
 logger = logging.getLogger(__name__)
 
 
 async def build_system_prompt() -> str:
-    sections = [SYSTEM_PROMPT]
+    sections = [make_system_prompt(ASSISTANT_NAME)]
 
     prefs = await fetchall("SELECT key, value FROM preferences ORDER BY updated_at DESC")
     if prefs:

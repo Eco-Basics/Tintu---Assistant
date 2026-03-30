@@ -2,7 +2,7 @@ import logging
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
 from app.config import TELEGRAM_TOKEN, TELEGRAM_USER_ID
-from app.bot.commands import start_command, help_command
+from app.bot.commands import start_command, help_command, me_command
 from app.bot.handlers import message_handler
 from app.bot.jobs import setup_jobs
 from app.storage.migrations import run_migrations
@@ -39,6 +39,7 @@ def main():
     # Minimal commands — the bot is primarily natural language
     app.add_handler(CommandHandler("start", start_command, filters=user_filter))
     app.add_handler(CommandHandler("help",  help_command,  filters=user_filter))
+    app.add_handler(CommandHandler("me",    me_command,    filters=user_filter))
 
     # All other interaction handled through natural language
     app.add_handler(

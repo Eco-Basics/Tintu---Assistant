@@ -15,6 +15,7 @@ from app.llm.prompts import (
     DECISION_EXTRACT_PROMPT,
     SYSTEM_PROMPT,
 )
+from app.config import ASSISTANT_NAME
 from app.utils.time import today_str, now, format_dt
 from app.utils.text import fmt_task_line, fmt_reminder_line, fmt_routine_line
 
@@ -55,9 +56,27 @@ Just talk to me in plain language. Examples:
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ollama_ok = await check_ollama()
-    status = "✅ Language model online." if ollama_ok else "⚠️ Language model offline — Ollama not reachable."
+    status = "Language model online." if ollama_ok else "Language model offline — Ollama not reachable."
     await update.message.reply_text(
-        f"*Tintu is running.*\n\n{status}\n\nSend /help to see available commands.",
+        f"*Hi, I'm {ASSISTANT_NAME}.*\n\n"
+        f"I'm your private planning and memory assistant. Here's what I can do:\n\n"
+        f"*What I'm good at:*\n"
+        f"- Tasks, reminders, and routines\n"
+        f"- Capturing notes, decisions, and project updates\n"
+        f"- Summarizing your day or week\n"
+        f"- Finding things you've told me before\n\n"
+        f"*What I can't do:*\n"
+        f"- Code, math, or research\n"
+        f"- Anything requiring real-time or external information\n"
+        f"- Complex analysis or editing\n\n"
+        f"*How to use me:*\n"
+        f"Just talk to me in plain language — no commands needed for most things. "
+        f"Try telling me a task, asking what's on your list, or saying something like "
+        f"\"remind me Friday at 5pm to review the contract\".\n\n"
+        f"You can also shape how I work: tell me to be more direct, use a different tone, "
+        f"or focus on a specific project — I'll remember.\n\n"
+        f"_Status: {status}_\n\n"
+        f"Send /help to see all commands, or just start talking.",
         parse_mode="Markdown",
     )
 
@@ -360,6 +379,60 @@ async def post_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"*Ready to post:*\n\n{draft}\n\nReply *yes* to confirm, anything else cancels.",
         parse_mode="Markdown",
     )
+
+
+async def me_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    sections = [f"*What {ASSISTANT_NAME} knows about you*\n"]
+
+    # Open tasks
+    tasks = await list_tasks()
+    if tasks:
+        lines = "\n".join(fmt_task_line(t) for t in tasks[:10])
+        sections.append(f"*Open tasks ({len(tasks)}):*\n{lines}")
+    else:
+        sections.append("*Open tasks:* none")
+
+    # Pending reminders
+    reminders = await list_pending_reminders()
+    if reminders:
+        lines = "\n".join(fmt_reminder_line(r) for r in reminders[:5])
+        sections.append(f"*Pending reminders ({len(reminders)}):*\n{lines}")
+    else:
+        sections.append("*Pending reminders:* none")
+
+    # Personality traits
+    traits = await fetchall("SELECT key, value FROM personality_traits ORDER BY key")
+    if traits:
+        lines = "\n".join(f"- {r['key']}: {r['value']}" for r in traits)
+        sections.append(f"*Personality traits:*\n{lines}")
+    else:
+        sections.append("*Personality traits:* none captured yet")
+
+    # Behavioral preferences
+    prefs = await fetchall("SELECT key, value FROM preferences ORDER BY key")
+    if prefs:
+        lines = "\n".join(f"- {r['key']}: {r['value']}" for r in prefs)
+        sections.append(f"*Preferences:*\n{lines}")
+    else:
+        sections.append("*Preferences:* none captured yet")
+
+    # Vault stats
+    from app.config import VAULT_PATH
+    note_count = sum(1 for _ in VAULT_PATH.rglob("*.md")) if VAULT_PATH.exists() else 0
+    sections.append(f"*Vault:* {note_count} notes")
+
+    # Last session summary
+    last_summary = await fetchone(
+        "SELECT summary_text, created_at FROM session_summaries ORDER BY created_at DESC LIMIT 1"
+    )
+    if last_summary:
+        sections.append(
+            f"*Last session summary ({last_summary['created_at'][:10]}):*\n{last_summary['summary_text'][:400]}"
+        )
+    else:
+        sections.append("*Last session summary:* none yet")
+
+    await update.message.reply_text("\n\n".join(sections), parse_mode="Markdown")
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
