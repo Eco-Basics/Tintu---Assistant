@@ -381,7 +381,7 @@ async def post_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def me_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def profile_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     sections = [f"*What {ASSISTANT_NAME} knows about you*\n"]
 
     # Open tasks
