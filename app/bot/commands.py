@@ -382,6 +382,14 @@ async def post_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def profile_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        await _profile_command(update, context)
+    except Exception as e:
+        logger.error(f"profile_command error: {e}", exc_info=True)
+        await update.message.reply_text(f"Error building profile: {e}")
+
+
+async def _profile_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     sections = [f"*What {ASSISTANT_NAME} knows about you*\n"]
 
     # Open tasks
@@ -423,7 +431,7 @@ async def profile_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Last session summary
     last_summary = await fetchone(
-        "SELECT summary_text, created_at FROM session_summaries ORDER BY created_at DESC LIMIT 1"
+        "SELECT summary_text, created_at FROM conversation_summaries ORDER BY created_at DESC LIMIT 1"
     )
     if last_summary:
         sections.append(
@@ -432,7 +440,11 @@ async def profile_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         sections.append("*Last session summary:* none yet")
 
-    await update.message.reply_text("\n\n".join(sections), parse_mode="Markdown")
+    try:
+        await update.message.reply_text("\n\n".join(sections), parse_mode="Markdown")
+    except Exception:
+        # Markdown parse error — send as plain text
+        await update.message.reply_text("\n\n".join(sections))
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
