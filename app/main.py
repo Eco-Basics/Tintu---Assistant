@@ -1,6 +1,5 @@
 import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, TypeHandler
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
 from app.config import TELEGRAM_TOKEN, TELEGRAM_USER_ID
 from app.bot.commands import start_command, help_command
@@ -50,15 +49,6 @@ def main():
         setup_jobs(app.job_queue, TELEGRAM_USER_ID)
     else:
         logger.warning("JobQueue not available — install python-telegram-bot[job-queue] to enable scheduled jobs")
-
-    async def debug_all(update: Update, context):
-        logger.info(f"RAW UPDATE received: {update}")
-
-    async def debug_catchall(update: Update, context):
-        logger.info(f"CATCHALL fired: user_id={update.effective_user.id if update.effective_user else 'none'} text={update.message.text if update.message else 'none'}")
-
-    app.add_handler(TypeHandler(Update, debug_all), group=-1)
-    app.add_handler(MessageHandler(filters.ALL, debug_catchall), group=1)
 
     logger.info(f"Starting bot for user_id={TELEGRAM_USER_ID}")
     app.run_polling(drop_pending_updates=True)

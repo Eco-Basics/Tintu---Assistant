@@ -46,7 +46,6 @@ async def summarize_and_notify(chat_id: int, update) -> None:
 
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    logger.info("MESSAGE HANDLER CALLED")
     message = update.message
     text = message.text.strip()
 
@@ -92,19 +91,15 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Log incoming message
-    logger.info(f"Logging message to DB: {text[:50]!r}")
     await execute(
         "INSERT INTO message_log (telegram_message_id, direction, kind, summary) VALUES (?, ?, ?, ?)",
         (message.message_id, "in", "message", text[:200]),
     )
-    logger.info("DB log done, calling route()")
 
     # Route and respond
     try:
         await message.reply_chat_action("typing")
-        logger.info("Typing action sent, awaiting route()")
         response = await route(text, chat_id=update.effective_chat.id)
-        logger.info(f"route() returned: {response[:80]!r}")
         final_response = f"{signal_prefix}{response}" if signal_prefix else response
         await message.reply_text(final_response, parse_mode="Markdown")
         # Phase 3: persist conversation turn and update in-memory cache
