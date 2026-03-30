@@ -153,9 +153,8 @@ This is Option A's natural upgrade path — same project/session model, better i
 ## Open items
 
 - [x] Hetzner CX33 provisioned (Ubuntu 24.04, Helsinki)
-- [x] Dene (Mithu's bot) deployed and running as systemd service
-- [ ] Friend's Telegram bot token + user ID
-- [ ] Friend's timezone
-- [ ] Decision: do both users want the same base personality starting point, or define separately from day one?
-- [ ] Ingle (friend's bot) deployed to `/opt/assistant-friend/`
+- [x] Dene (Mithu's bot) deployed and in production as `dene.service`
+- [x] Ingle (friend's bot) deployed and in production as `ingle.service`
+- [x] Self-evolving system prompt (personality_traits + preferences + personas)
+- [x] `/start` onboarding, `/profile` summary, `/help` full command list
 - [ ] Telegram group created with topics enabled (for Goal 2 Option A)

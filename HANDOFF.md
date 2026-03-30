@@ -2,92 +2,94 @@
 
 See [PROJECT.md](PROJECT.md) for full goals, decisions, and architecture notes.
 
+*Last updated: 2026-03-30*
+
+---
+
 ## Status
-Phase 1 + Phase 2 code fully built locally. Ready to deploy. Waiting on Hetzner VPS.
 
-**Scope has expanded since initial build** — adaptive personality layer and context window management need to be added before deployment. Goal 2 (multi-session Claude via TG topics) is a separate build after VPS is up.
+**Goal 1 complete. Both bots in production.**
 
----
+- Dene (Mithu) — live at `/opt/assistant-mithu/`, running as `dene.service`
+- Ingle (friend, user ID 5096992323) — live at `/opt/assistant-friend/`, running as `ingle.service`
+- VPS: Hetzner CX33, Helsinki, 204.168.209.135
+- Model: qwen3:1.7b via Ollama (shared instance, `OLLAMA_KEEP_ALIVE=-1`)
 
-## What's built
-
-Full Phase 1 + Phase 2 implementation at `C:\Tintu, the Assistant\`
-
-- Telegram bot (natural language only, no slash commands)
-- SQLite database with all 8 tables
-- Obsidian-compatible Markdown vault
-- Ollama client (Qwen3:4b)
-- Intent classifier (keyword + LLM fallback)
-- Full router handling all intents from plain language:
-  - capture note, create task, set reminder, complete task
-  - list tasks, create routine, update preference, search
-  - retrieval, comparison, daily summary, EOD review, draft
-- Scheduled reminder delivery (checks every 60s)
-- systemd service file ready
+Goal 2 (multi-session Claude via Telegram topics) not started.
 
 ---
 
-## Deployment architecture — two bots, one Ollama
+## What's built and working
 
-Two completely separate bot deployments on the same VPS. Each has its own
-codebase copy, database, vault, and Telegram bot. Both share one Ollama
-instance. No code changes required.
+### Core assistant
+- Natural language routing — intent classifier (keyword + LLM fallback) → handler
+- Tasks, reminders, routines, notes, decisions, project tracking
+- Vault (Obsidian-compatible Markdown at `BASE_DIR/vault/`)
+- SQLite database (`BASE_DIR/data/assistant.db`)
+- Scheduled reminder delivery (job queue, checks every 60s)
 
+### Adaptive personality layer
+- `personality_traits` table — updated when user shapes tone/style
+- `preferences` table — updated from behavioral corrections
+- `personas` table — named persona definitions, one active at a time
+- `build_system_prompt()` in `app/llm/prompt_builder.py` assembles all layers dynamically each request
+
+### Context management (Phase 3)
+- Conversation history stored in DB, loaded on startup
+- Session continuity signal on first message (resume/fresh)
+- Auto-summarization every 20 turns — sends summary to user for correction
+- `conversation_summaries` table stores session summaries
+
+### Commands
+- `/start` — onboarding intro with bot name, capabilities, limitations
+- `/help` — full command list
+- `/profile` — snapshot of everything the bot knows: open tasks, reminders, traits, preferences, vault count, last session summary
+- `/task`, `/remind`, `/routine`, `/search`, `/decision`, `/inbox`, `/project`, `/draft`, `/daily`, `/eod`
+
+### LLM client
+- Ollama `/api/chat` (not `/api/generate` — bug #14793)
+- `think:false` + `/no_think` prefix to suppress chain-of-thought
+- `_strip_thinking()` strips any leaked `<think>` blocks
+- `num_predict=20` for classification calls (speed)
+- `num_thread=4`, response time ~5s on CX33 CPU
+
+---
+
+## Key decisions made
+
+| Decision | Choice | Reason |
+|---|---|---|
+| Model | qwen3:1.7b | 4b took 2-3 min on CPU; 1.7b under 5s. Quality impact minimal. |
+| Ollama endpoint | `/api/chat` | `/api/generate` silently ignores `think:false` (bug #14793) |
+| Context budget | 8K working within 32K native | Speed + consistency. Full 32K available if needed. |
+| Capability refusal | Hard decline for code/math/research | Clean refusal > confident wrong answer |
+| Personality | Dynamic assembly from DB tables | Evolves through natural conversation, not hardcoded |
+
+---
+
+## .env values
+
+**Dene (`/opt/assistant-mithu/.env`)**
 ```
-/opt/
-  assistant-mithu/      ← your bot
-  assistant-friend/     ← friend's bot
-  (ollama runs as a system service, shared)
+TELEGRAM_TOKEN=<Mithu's bot token>
+TELEGRAM_USER_ID=7912940724
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen3:1.7b
+BASE_DIR=/opt/assistant-mithu
+TIMEZONE=Asia/Kolkata
+ASSISTANT_NAME=Dene
 ```
 
----
-
-## What you need before resuming
-
-1. **Hetzner server** — create at hetzner.com
-   - OS: Ubuntu 24.04
-   - Type: CX33 (4 vCPU, 8GB RAM)
-   - Note the IP address and root password from the email
-
-2. **Your Telegram bot token** — you already have this
-
-3. **Your Telegram user ID** — `7912940724`
-
-4. **Friend's Telegram bot** — your friend creates a new bot via [@BotFather](https://t.me/BotFather)
-   - Send `/newbot`, follow prompts, copy the token
-   - Friend gets their user ID from [@userinfobot](https://t.me/userinfobot)
-
----
-
-## Resume instructions
-
-Tell Claude: *"Resume the Tintu two-bot deployment — Hetzner is set up, IP is X.X.X.X"*
-
-### Steps (done once, for both bots)
-
-**Server setup**
-1. SSH into the server
-2. Install Python 3.11+, pip, venv
-3. Install Ollama and pull `qwen3:4b`
-4. Create system user: `useradd -r -s /bin/false assistant`
-
-**Deploy your bot**
-1. Upload code to `/opt/assistant-mithu/`
-2. Create venv: `python3 -m venv /opt/assistant-mithu/venv`
-3. Install deps: `venv/bin/pip install -r requirements.txt`
-4. Create `.env` (see values below — Mithu)
-5. Test manually: `venv/bin/python -m app.main`
-6. Install service: copy `systemd/assistant-mithu.service` to `/etc/systemd/system/`
-7. `systemctl enable --now assistant-mithu`
-
-**Deploy friend's bot**
-1. Upload same code to `/opt/assistant-friend/`
-2. Create venv: `python3 -m venv /opt/assistant-friend/venv`
-3. Install deps: `venv/bin/pip install -r requirements.txt`
-4. Create `.env` (see values below — Friend)
-5. Test manually: `venv/bin/python -m app.main`
-6. Install service: copy `systemd/assistant-friend.service` to `/etc/systemd/system/`
-7. `systemctl enable --now assistant-friend`
+**Ingle (`/opt/assistant-friend/.env`)**
+```
+TELEGRAM_TOKEN=8726488950:AAEQUZ0qQs3xDU1xVd0myHFPCtk-tMJmJtA
+TELEGRAM_USER_ID=5096992323
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen3:1.7b
+BASE_DIR=/opt/assistant-friend
+TIMEZONE=Asia/Kolkata
+ASSISTANT_NAME=Ingle
+```
 
 ---
 
@@ -95,33 +97,56 @@ Tell Claude: *"Resume the Tintu two-bot deployment — Hetzner is set up, IP is 
 
 | File | Purpose |
 |---|---|
-| `app/main.py` | Entry point |
+| `app/main.py` | Entry point, handler registration |
 | `app/config.py` | All config loaded from `.env` |
-| `.env.example` | Template — copy to `.env` and fill in |
-| `systemd/assistant-mithu.service` | systemd service for your bot |
-| `systemd/assistant-friend.service` | systemd service for friend's bot |
-| `scripts/backup.sh` | Daily backup of DB + vault |
+| `app/bot/commands.py` | All slash command handlers |
+| `app/bot/handlers.py` | Natural language message handler |
+| `app/bot/router.py` | Intent routing |
+| `app/llm/prompt_builder.py` | Assembles dynamic system prompt |
+| `app/llm/prompts.py` | `make_system_prompt(name)` + all extraction prompts |
+| `app/llm/ollama_client.py` | Ollama API client |
+| `app/llm/classifier.py` | Intent classifier |
+| `app/storage/models.py` | DB schema |
+| `app/storage/migrations.py` | Migration runner |
+| `.env.example` | Config template |
 
 ---
 
-## .env values — Mithu (`/opt/assistant-mithu/.env`)
+## VPS operations
 
-```
-TELEGRAM_TOKEN=<your bot token>
-TELEGRAM_USER_ID=7912940724
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=qwen3:4b
-BASE_DIR=/opt/assistant-mithu
-TIMEZONE=Asia/Kolkata
+```bash
+# Status
+systemctl status dene
+systemctl status ingle
+journalctl -u dene -f
+journalctl -u ingle -f
+
+# Deploy update
+cd /opt/assistant-mithu && git pull && systemctl restart dene
+cd /opt/assistant-friend && git pull && systemctl restart ingle
+
+# Ollama
+systemctl status ollama
+ollama list
 ```
 
-## .env values — Friend (`/opt/assistant-friend/.env`)
+---
 
-```
-TELEGRAM_TOKEN=<friend's bot token>
-TELEGRAM_USER_ID=<friend's telegram user ID>
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=qwen3:4b
-BASE_DIR=/opt/assistant-friend
-TIMEZONE=<friend's timezone>
-```
+## Open items
+
+- [x] Hetzner CX33 provisioned
+- [x] Dene deployed and in production
+- [x] Ingle deployed and in production
+- [x] Self-evolving system prompt
+- [x] `/start` onboarding
+- [x] `/profile` summary command
+- [ ] Goal 2: multi-session Claude via Telegram group topics — not started
+- [ ] Backup script (`scripts/backup.sh`) — not verified running on VPS
+
+---
+
+## Next session starting point
+
+**Goal 2: multi-session Claude via Telegram topics**
+
+Tell Claude: *"Resume Tintu project — Goal 1 is complete, both bots in production. Starting Goal 2: multi-session Claude sessions via a Telegram group with topics. See PROJECT.md Option A."*
