@@ -21,36 +21,38 @@ from app.utils.text import fmt_task_line, fmt_reminder_line, fmt_routine_line
 
 logger = logging.getLogger(__name__)
 
-HELP_TEXT = """\
-*Tintu — Planning Assistant*
+def _build_help_text() -> str:
+    return f"""\
+*{ASSISTANT_NAME} — Commands & Usage*
 
-Just talk to me in plain language. Examples:
+Most things work in plain language — just talk to me. Commands are for when you want to be explicit.
 
-*Tasks*
+*Commands*
+`/profile` — everything I know about you: tasks, reminders, traits, preferences, vault stats
+`/task add <title>` — create a task
+`/task list` — all open tasks
+`/task today` — tasks due today
+`/task done <id>` — mark a task complete
+`/remind <natural language>` — set a reminder (e.g. "Friday 5pm review pitch")
+`/routine add <name> | <schedule>` — create a recurring routine
+`/routine list` — list active routines
+`/search <query>` — search tasks, decisions, and notes
+`/decision <describe it>` — log a decision to the vault
+`/inbox <note>` — save a quick note
+`/project list` — list projects
+`/project summary <name>` — summarise a project
+`/draft <what to write>` — draft a message or text
+`/daily` — daily summary
+`/eod` — end-of-day review
+`/help` — this message
+
+*Plain language examples*
 "Add a task to review the pitch deck"
-"What's on my list?"
-"I finished the client call"
-
-*Reminders*
 "Remind me Friday at 5pm to send the invoice"
-"Ping me tomorrow morning about the meeting"
-
-*Notes & decisions*
-"Save this: we decided to go with Qwen for the model"
-"Log a decision — we're dropping the Discord integration for now"
-
-*Retrieval*
 "What did we decide about the model?"
-"What tasks are due this week?"
-"Find my notes on the assistant project"
-
-*Summaries*
-"Give me a daily summary"
-"End of day review"
-
-*Preferences*
+"Save this: we're going with the Helsinki server"
 "I prefer morning summaries at 8am"
-"Always tag fitness tasks under the health project"
+"Be more direct"
 """
 
 
@@ -82,7 +84,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(HELP_TEXT, parse_mode="Markdown")
+    await update.message.reply_text(_build_help_text(), parse_mode="Markdown")
 
 
 async def inbox_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -431,11 +433,11 @@ async def _profile_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Last session summary
     last_summary = await fetchone(
-        "SELECT summary_text, created_at FROM conversation_summaries ORDER BY created_at DESC LIMIT 1"
+        "SELECT summary, created_at FROM conversation_summaries ORDER BY created_at DESC LIMIT 1"
     )
     if last_summary:
         sections.append(
-            f"*Last session summary ({last_summary['created_at'][:10]}):*\n{last_summary['summary_text'][:400]}"
+            f"*Last session summary ({last_summary['created_at'][:10]}):*\n{last_summary['summary'][:400]}"
         )
     else:
         sections.append("*Last session summary:* none yet")
