@@ -1,8 +1,15 @@
+import re
 import logging
 import httpx
 from app.config import OLLAMA_BASE_URL, OLLAMA_MODEL
 
 logger = logging.getLogger(__name__)
+
+_THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
+
+
+def _strip_thinking(text: str) -> str:
+    return _THINK_RE.sub("", text).strip()
 
 
 async def generate(
@@ -19,7 +26,8 @@ async def generate(
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(f"{OLLAMA_BASE_URL}/api/generate", json=payload)
             response.raise_for_status()
-            return response.json().get("response", "").strip()
+            raw = response.json().get("response", "").strip()
+            return _strip_thinking(raw)
     except httpx.TimeoutException:
         logger.error("Ollama request timed out")
         return "The model took too long to respond. Please try again."
