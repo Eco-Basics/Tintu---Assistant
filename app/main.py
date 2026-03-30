@@ -43,7 +43,7 @@ def main():
 
     # All other interaction handled through natural language
     app.add_handler(
-        MessageHandler(filters.TEXT & ~filters.COMMAND & user_filter, message_handler)
+        MessageHandler(filters.TEXT & ~filters.COMMAND & user_filter, message_handler, block=False)
     )
 
     if app.job_queue is not None:

@@ -46,6 +46,7 @@ async def summarize_and_notify(chat_id: int, update) -> None:
 
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.info("MESSAGE HANDLER CALLED")
     message = update.message
     text = message.text.strip()
 
