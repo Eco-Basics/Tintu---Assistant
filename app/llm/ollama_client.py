@@ -9,9 +9,9 @@ async def generate(
     prompt: str,
     system: str = "",
     model: str = OLLAMA_MODEL,
-    timeout: int = 90,
+    timeout: int = 300,
 ) -> str:
-    payload: dict = {"model": model, "prompt": prompt, "stream": False}
+    payload: dict = {"model": model, "prompt": f"/no_think {prompt}", "stream": False}
     if system:
         payload["system"] = system
 
